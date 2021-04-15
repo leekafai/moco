@@ -1,0 +1,25 @@
+{
+  "name": "moco",
+  "version": "1.0.0",
+  "description": "provides a duplicate function call suppression mechanism.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leekafai/moco.git"
+  },
+  "author": "leekafai",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/leekafai/moco/issues"
+  },
+  "homepage": "https://github.com/leekafai/moco#readme",
+  "dependencies": {
+    "mysql2": "^2.2.5"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.37"
+  }
+}
