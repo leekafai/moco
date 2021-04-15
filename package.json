@@ -2,7 +2,7 @@
   "name": "moco",
   "version": "1.0.0",
   "description": "provides a duplicate function call suppression mechanism.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "node test.js"
   },
