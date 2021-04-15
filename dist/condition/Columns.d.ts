@@ -1,6 +1,6 @@
-declare const Columns: (cols: string | string[] | {
+declare const Columns: (cols: string | {
     [key: string]: string;
-}, concat?: string) => {
+} | string[], concat?: string) => {
     COLUMNS: {
         SQL: string;
     };

@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Offset = exports.Limit = void 0;
+const is_1 = require("../util/is");
 const Limit = (limit, offset) => {
-    if (Math.trunc(limit) !== limit || limit < 1)
+    if (!is_1.isInteger(limit) || limit < 1)
         return;
     let ofs = undefined;
-    if (offset && Math.trunc(offset) === offset) {
+    if (offset && is_1.isInteger(offset)) {
         ofs = offset;
     }
     if (ofs) {
@@ -15,7 +16,7 @@ const Limit = (limit, offset) => {
 };
 exports.Limit = Limit;
 const Offset = (offset) => {
-    if (Math.trunc(offset) !== offset || offset < 1)
+    if (!is_1.isInteger(offset) || offset < 1)
         return;
     return { OFFSET: offset };
 };

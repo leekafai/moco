@@ -1,7 +1,8 @@
+import { isInteger } from '../util/is'
 const Limit = (limit: number, offset?: number) => {
-  if (Math.trunc(limit) !== limit || limit < 1) return
+  if (!isInteger(limit) || limit < 1) return
   let ofs = undefined
-  if (offset && Math.trunc(offset) === offset) {
+  if (offset && isInteger(offset)) {
     ofs = offset
   }
   if (ofs) {
@@ -10,7 +11,7 @@ const Limit = (limit: number, offset?: number) => {
   return { LIMIT: { SQL: ` LIMIT ?`, CON: [limit] } }
 }
 const Offset = (offset: number) => {
-  if (Math.trunc(offset) !== offset || offset < 1) return
+  if (!isInteger(offset) || offset < 1) return
   return { OFFSET: offset }
 }
 
