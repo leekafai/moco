@@ -1,3 +1,5 @@
+import { Condition } from './condition'
+import { isObject } from '../util/is'
 const ObjParser = (cols: any) => {
   let _cols = undefined
   const keys = Object.entries(cols)
@@ -17,7 +19,7 @@ const stringParser = (cols: string) => {
   }
   return cols[0] === '`' ? cols : `\`${cols}\``
 }
-import { isObject } from '../util/is'
+
 const Columns = (cols: string[] | string | { [key: string]: string } | "*", concat?: string) => {
   let _cols: string = undefined
 
@@ -46,6 +48,6 @@ const Columns = (cols: string[] | string | { [key: string]: string } | "*", conc
     _cols = stringParser(cols)
   }
   if (!_cols) return
-  return { COLUMNS: { SQL: (typeof concat === 'string' && concat.length) ? concat + ',' + _cols : _cols } }
+  return new Condition({ COLUMNS: { SQL: (typeof concat === 'string' && concat.length) ? concat + ',' + _cols : _cols } })
 }
 export { Columns }

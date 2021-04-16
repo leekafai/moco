@@ -1,23 +1,36 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderBy = void 0;
+const condition_1 = require("./condition");
+const is_1 = require("../util/is");
 const OrderBy = (orderBy) => {
-    console.log(orderBy);
-    let _oby = undefined;
+    let _odby = undefined;
     if (Array.isArray(orderBy)) {
         const list = [];
         const l = orderBy.length;
         for (let i = 0; i < l; i++) {
-            const x = OrderBy(orderBy[i]);
-            if (!x)
+            const y = orderBy[i];
+            if (Array.isArray(y)) {
                 continue;
-            const { ORDERBY } = x;
-            list.push(ORDERBY.SQL);
+            }
+            if (typeof y === 'string') {
+                list.push(y);
+                continue;
+            }
+            if (is_1.isObject(y)) {
+                const x = OrderBy(y);
+                if (!x)
+                    continue;
+                const { ORDERBY } = x.data;
+                list.push(ORDERBY.SQL);
+            }
         }
         const SQL = list.filter((c) => c && c.length).join(',');
-        return { ORDERBY: { SQL } };
+        if (SQL === null || SQL === void 0 ? void 0 : SQL.length) {
+            _odby = SQL;
+        }
     }
-    else if (typeof orderBy === 'object') {
+    else if (is_1.isObject(orderBy)) {
         const entries = Object.entries(orderBy);
         const c = entries.length;
         const newEnt = [];
@@ -36,13 +49,13 @@ const OrderBy = (orderBy) => {
             newEnt.forEach(([col, dirt]) => {
                 sqlA.push(` ${col} ${dirt} `);
             });
-            return { ORDERBY: { SQL: sqlA.join(',') } };
+            const SQL = sqlA.join(',');
+            _odby = (SQL === null || SQL === void 0 ? void 0 : SQL.length) ? SQL : undefined;
         }
     }
     else if (typeof orderBy === 'string') {
-        return { ORDERBY: { SQL: orderBy } };
+        _odby = (orderBy === null || orderBy === void 0 ? void 0 : orderBy.length) ? orderBy : undefined;
     }
-    if (!_oby)
-        return;
+    return new condition_1.Condition({ ORDERBY: { SQL: `ORDER BY ${_odby}` } });
 };
 exports.OrderBy = OrderBy;

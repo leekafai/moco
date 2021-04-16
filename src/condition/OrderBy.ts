@@ -1,19 +1,33 @@
+import { Condition } from './condition'
+import { isObject } from '../util/is'
 interface orderByDire { [column: string]: 'ASC' | 'DESC' | true | false | 1 | 0 }
+
 const OrderBy = (orderBy: orderByDire | string | orderByDire[]) => {
-  console.log(orderBy)
-  let _oby = undefined
+  let _odby: string = undefined
   if (Array.isArray(orderBy)) {
     const list = []
     const l = orderBy.length
     for (let i = 0; i < l; i++) {
-      const x = OrderBy(orderBy[i])
-      if (!x) continue
-      const { ORDERBY } = x
-      list.push(ORDERBY.SQL)
+      const y = orderBy[i]
+      if (Array.isArray(y)) {
+        continue
+      }
+      if (typeof y === 'string') {
+        list.push(y)
+        continue
+      }
+      if (isObject(y)) {
+        const x = OrderBy(y)
+        if (!x) continue
+        const { ORDERBY } = x.data
+        list.push(ORDERBY.SQL)
+      }
     }
     const SQL: string = list.filter((c) => c && c.length).join(',')
-    return { ORDERBY: { SQL } }
-  } else if (typeof orderBy === 'object') {
+    if (SQL?.length) {
+      _odby = SQL
+    }
+  } else if (isObject(orderBy)) {
     const entries = Object.entries(orderBy)
     const c = entries.length
     const newEnt = []
@@ -34,12 +48,13 @@ const OrderBy = (orderBy: orderByDire | string | orderByDire[]) => {
       newEnt.forEach(([col, dirt]) => {
         sqlA.push(` ${col} ${dirt} `)
       })
-      return { ORDERBY: { SQL: sqlA.join(',') } }
+      const SQL = sqlA.join(',')
+      _odby = SQL?.length ? SQL : undefined
     }
   } else if (typeof orderBy === 'string') {
-    return { ORDERBY: { SQL: orderBy } }
-  }
-  if (!_oby) return
+    _odby = orderBy?.length ? orderBy : undefined
 
+  }
+  return new Condition({ ORDERBY: { SQL: `ORDER BY ${_odby}` } })
 }
 export { OrderBy }

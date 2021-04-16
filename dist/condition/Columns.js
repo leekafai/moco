@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Columns = void 0;
+const condition_1 = require("./condition");
+const is_1 = require("../util/is");
 const ObjParser = (cols) => {
     let _cols = undefined;
     const keys = Object.entries(cols);
@@ -21,7 +23,6 @@ const stringParser = (cols) => {
     }
     return cols[0] === '`' ? cols : `\`${cols}\``;
 };
-const is_1 = require("../util/is");
 const Columns = (cols, concat) => {
     let _cols = undefined;
     if (Array.isArray(cols) && cols.length) {
@@ -49,6 +50,6 @@ const Columns = (cols, concat) => {
     }
     if (!_cols)
         return;
-    return { COLUMNS: { SQL: (typeof concat === 'string' && concat.length) ? concat + ',' + _cols : _cols } };
+    return new condition_1.Condition({ COLUMNS: { SQL: (typeof concat === 'string' && concat.length) ? concat + ',' + _cols : _cols } });
 };
 exports.Columns = Columns;
