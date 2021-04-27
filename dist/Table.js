@@ -11,57 +11,52 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Table = void 0;
 const sqlRender_1 = require("./util/sqlRender");
-const condition_1 = require("./condition/condition");
 class Table {
     constructor(name, options) {
-        if (!name || typeof name !== 'string')
+        const trimName = name.trim();
+        if (typeof name !== 'string' || !trimName.length)
             throw new Error('table name invalid');
-        this.TableName = name;
+        this.TableName = trimName;
         this.options = options;
     }
     Select(...conditions) {
         return __awaiter(this, void 0, void 0, function* () {
             const SQLTEMPLATE = `SELECT {{COLUMNS}} FROM {{TABLENAME}} {{WHERE}} {{ORDERBY}} {{LIMIT}} {{OFFSET}}`;
-            const len = conditions.length;
-            const values = [];
-            const sqlContext = {};
-            sqlContext.TABLENAME = [`\`${this.TableName}\``];
-            sqlContext.COLUMNS = ['*'];
-            console.log(conditions, 'conditions');
-            const sqlContextKeyAppendTimes = {};
-            for (let i = 0; i < len; i++) {
-                const Con = conditions[i];
-                if ((Con === null || Con === void 0 ? void 0 : Con.constructor) !== condition_1.Condition)
-                    continue;
-                Con.keys.forEach((key) => {
-                    const cdk = Con.data[key];
-                    values.push(...((cdk === null || cdk === void 0 ? void 0 : cdk.CON) || []));
-                    if (!sqlContext[key])
-                        sqlContext[key] = [];
-                    sqlContext[key].push((cdk === null || cdk === void 0 ? void 0 : cdk.SQL) || '');
-                    sqlContextKeyAppendTimes[key] = (sqlContextKeyAppendTimes[key] || 0) + 1;
-                    const jumpHead = sqlContext[key].length - sqlContextKeyAppendTimes[key];
-                    if (jumpHead > 0) {
-                        sqlContext[key] = sqlContext[key].slice(jumpHead);
-                    }
-                });
-            }
-            const sql = sqlRender_1.render(SQLTEMPLATE, sqlContext);
-            console.log(values);
-            return sql;
+            const renderCtxRes = sqlRender_1.renderCtx(...conditions);
+            console.log(renderCtxRes, 'renderCtxRes');
+            const defaultCtx = {
+                COLUMNS: {
+                    SQL: '*'
+                },
+                TABLENAME: {
+                    SQL: this.TableName
+                }
+            };
+            const result = sqlRender_1.toQuery(SQLTEMPLATE, renderCtxRes, defaultCtx);
+            console.log(result, 'result');
+            return '';
         });
     }
-    Update() {
+    Update(data, ...conditions) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(data, conditions);
         });
     }
-    Insert() {
+    Insert(data, ...conditions) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(data, conditions);
         });
     }
     Delete() {
         return __awaiter(this, void 0, void 0, function* () {
         });
+    }
+    ToQuery(sqlTemplate, ...conditions) {
+        if (typeof sqlTemplate !== 'string' || !sqlTemplate.length)
+            return ['', []];
+        console.log(conditions);
+        const result = sqlRender_1.toQuery(sqlTemplate, sqlRender_1.renderCtx(...conditions));
+        return result;
     }
 }
 exports.Table = Table;

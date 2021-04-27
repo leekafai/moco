@@ -23,7 +23,7 @@ const stringParser = (cols) => {
     }
     return cols[0] === '`' ? cols : `\`${cols}\``;
 };
-const Columns = (cols, concat) => {
+const Columns = (cols, options = {}) => {
     let _cols = undefined;
     if (Array.isArray(cols) && cols.length) {
         const spl = [];
@@ -50,6 +50,7 @@ const Columns = (cols, concat) => {
     }
     if (!_cols)
         return;
-    return new condition_1.Condition({ COLUMNS: { SQL: (typeof concat === 'string' && concat.length) ? concat + ',' + _cols : _cols } });
+    const { concat } = options;
+    return new condition_1.Condition({ COLUMNS: { SQL: (typeof concat === 'string' && concat.length) ? _cols + ',' + concat : _cols } });
 };
 exports.Columns = Columns;

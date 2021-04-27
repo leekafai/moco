@@ -20,11 +20,13 @@ const run = async () => {
   const n = Date.now() - s
   console.log(n, 'avg', n / times)
   const v = await user.Select(
-    Columns(['id', 'nick', { f: 'df' }]),
+    // Columns(['id', 'nick', { f: 'df' }]),
+    // Columns(['grade']),
     OrderBy({ id: 1 }),
-    Limit('x'),
+    Limit(10, 12),
     Offset(12)
   )
   console.log(v)
+  // console.log(user.ToQuery(`SELECT {{COLUMNS}},{{COLUMNS}} {{LIMIT}}`, Columns(['id'], { concat: '1' }), Columns({ 'age': 'year' }), Limit(100, 20)))
 }
 run()

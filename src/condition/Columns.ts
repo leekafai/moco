@@ -19,8 +19,16 @@ const stringParser = (cols: string) => {
   }
   return cols[0] === '`' ? cols : `\`${cols}\``
 }
-
-const Columns = (cols: string[] | string | { [key: string]: string } | "*", concat?: string) => {
+/**
+ * Columns options
+ */
+interface ColumnsOptions {
+  /**
+   * 在生成的SQL片段中拼接指定的字符串内容
+   */
+  concat?: string
+}
+const Columns = (cols: string[] | string | { [key: string]: string } | "*", options: ColumnsOptions = {}) => {
   let _cols: string = undefined
 
   if (Array.isArray(cols) && cols.length) {
@@ -48,6 +56,7 @@ const Columns = (cols: string[] | string | { [key: string]: string } | "*", conc
     _cols = stringParser(cols)
   }
   if (!_cols) return
-  return new Condition({ COLUMNS: { SQL: (typeof concat === 'string' && concat.length) ? concat + ',' + _cols : _cols } })
+  const { concat } = options
+  return new Condition({ COLUMNS: { SQL: (typeof concat === 'string' && concat.length) ? _cols + ',' + concat : _cols } })
 }
 export { Columns }

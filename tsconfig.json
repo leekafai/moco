@@ -5,7 +5,7 @@
     "lib":["ES2020"],
     "watch":true,
     "noImplicitAny": true,
-    "removeComments": true,
+    "removeComments": false,
     "preserveConstEnums": true,
     "declaration":true,
     "outDir": "./dist", // 指定输出目录

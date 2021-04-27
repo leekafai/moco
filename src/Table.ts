@@ -1,7 +1,14 @@
-import { render } from './util/sqlRender'
+import { toQuery, renderCtx } from './util/sqlRender'
 import { Condition } from './condition/condition'
+import { renderContextItem } from './define'
 export interface tableOptions {
   SQLTEMPLATE: string
+}
+interface updateData {
+  [key: string]: any
+}
+interface insertData {
+  [key: string]: string | any[] | number
 }
 
 export class Table {
@@ -9,8 +16,9 @@ export class Table {
   _Columns: string | '*'
   options: tableOptions
   constructor(name: string, options?: tableOptions) {
-    if (!name || typeof name !== 'string') throw new Error('table name invalid')
-    this.TableName = name
+    const trimName = name.trim()
+    if (typeof name !== 'string' || !trimName.length) throw new Error('table name invalid')
+    this.TableName = trimName
     this.options = options
   }
   async Select(
@@ -18,45 +26,37 @@ export class Table {
   ) {
     const SQLTEMPLATE =
       `SELECT {{COLUMNS}} FROM {{TABLENAME}} {{WHERE}} {{ORDERBY}} {{LIMIT}} {{OFFSET}}`
-    const len = conditions.length
-    // TODO values
-    const values: any[] = []
-    const sqlContext: { [key: string]: string[] } = {}
-    sqlContext.TABLENAME = [`\`${this.TableName}\``]
-    sqlContext.COLUMNS = ['*']
-    console.log(conditions, 'conditions')
-    const sqlContextKeyAppendTimes: { [key: string]: number } = {}
-    for (let i = 0; i < len; i++) {
-      const Con = conditions[i]
-      if (Con?.constructor !== Condition) continue
-
-      Con.keys.forEach((key) => {
-        const cdk = Con.data[key]
-        values.push(...(cdk?.CON || []))
-        if (!sqlContext[key]) sqlContext[key] = []
-        sqlContext[key].push(cdk?.SQL || '')
-        sqlContextKeyAppendTimes[key] = (sqlContextKeyAppendTimes[key] || 0) + 1
-        const jumpHead = sqlContext[key].length - sqlContextKeyAppendTimes[key]
-        if (jumpHead > 0) {
-          sqlContext[key] = sqlContext[key].slice(jumpHead)
-        }
-      })
+    const renderCtxRes: {
+      [key: string]: renderContextItem[]
+    } = renderCtx(...conditions)
+    console.log(renderCtxRes, 'renderCtxRes')
+    const defaultCtx = {
+      COLUMNS: {
+        SQL: '*'
+      },
+      TABLENAME: {
+        SQL: this.TableName
+      }
     }
-    const sql = render(SQLTEMPLATE, sqlContext)
-    console.log(values)
-    return sql
-    // console.log(sql)
-
-    // return this
-  }
-  async Update() {
+    const result = toQuery(SQLTEMPLATE, renderCtxRes, defaultCtx)
+    console.log(result, 'result')
+    return ''
 
   }
-  async Insert() {
-
+  async Update(data: updateData | updateData[], ...conditions: Condition[]) {
+    console.log(data, conditions)
+  }
+  async Insert(data: insertData | insertData[], ...conditions: Condition[]) {
+    console.log(data, conditions)
   }
   async Delete() {
 
+  }
+  ToQuery(sqlTemplate: string, ...conditions: Condition[]): [string, any[]] {
+    if (typeof sqlTemplate !== 'string' || !sqlTemplate.length) return ['', []]
+    console.log(conditions)
+    const result = toQuery(sqlTemplate, renderCtx(...conditions))
+    return result
   }
   // TODO JOIN LEFT/RIGHT
 }
