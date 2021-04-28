@@ -13,11 +13,15 @@ exports.Table = void 0;
 const sqlRender_1 = require("./util/sqlRender");
 class Table {
     constructor(name, options) {
+        this.defaultTableOptions = {
+            updateWithoutWhere: false,
+            deleteWithoutWhere: false
+        };
         const trimName = name.trim();
         if (typeof name !== 'string' || !trimName.length)
             throw new Error('table name invalid');
         this.TableName = trimName;
-        this.options = options;
+        this.options = Object.assign({}, this.defaultTableOptions, (options || {}));
     }
     Select(...conditions) {
         return __awaiter(this, void 0, void 0, function* () {

@@ -1,6 +1,13 @@
 import { Condition } from './condition/condition';
 export interface tableOptions {
-    SQLTEMPLATE: string;
+    /**
+     * 允许 UPDATE 时不设置 WHERE 条件。默认 false
+     */
+    updateWithoutWhere: boolean;
+    /**
+     * 允许 DELETE 时不设置 WHERE 条件。默认 false
+     */
+    deleteWithoutWhere: boolean;
 }
 interface updateData {
     [key: string]: any;
@@ -10,8 +17,8 @@ interface insertData {
 }
 export declare class Table {
     TableName: string;
-    _Columns: string | '*';
     options: tableOptions;
+    defaultTableOptions: tableOptions;
     constructor(name: string, options?: tableOptions);
     Select(...conditions: Condition[]): Promise<string>;
     Update(data: updateData | updateData[], ...conditions: Condition[]): Promise<void>;

@@ -10,7 +10,8 @@
     "declaration":true,
     "outDir": "./dist", // 指定输出目录
     "sourceMap": false,
-    "checkJs":true
+    "checkJs":true,
+    "esModuleInterop":true
   },
   "include": [
     "src", // 会编译src目录下的所有文件，包括子目录

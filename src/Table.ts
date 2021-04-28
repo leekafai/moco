@@ -2,7 +2,14 @@ import { toQuery, renderCtx } from './util/sqlRender'
 import { Condition } from './condition/condition'
 import { renderContextItem } from './define'
 export interface tableOptions {
-  SQLTEMPLATE: string
+  /**
+   * 允许 UPDATE 时不设置 WHERE 条件。默认 false
+   */
+  updateWithoutWhere: boolean,
+  /**
+   * 允许 DELETE 时不设置 WHERE 条件。默认 false
+   */
+  deleteWithoutWhere: boolean
 }
 interface updateData {
   [key: string]: any
@@ -13,13 +20,16 @@ interface insertData {
 
 export class Table {
   TableName: string
-  _Columns: string | '*'
   options: tableOptions
+  defaultTableOptions: tableOptions = {
+    updateWithoutWhere: false,
+    deleteWithoutWhere: false
+  }
   constructor(name: string, options?: tableOptions) {
     const trimName = name.trim()
     if (typeof name !== 'string' || !trimName.length) throw new Error('table name invalid')
     this.TableName = trimName
-    this.options = options
+    this.options = Object.assign({}, this.defaultTableOptions, (options || {}))
   }
   async Select(
     ...conditions: Condition[]

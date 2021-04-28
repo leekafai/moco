@@ -8,7 +8,7 @@ interface ColumnsOptions {
      */
     concat?: string;
 }
-declare const Columns: (cols: string | string[] | {
+declare const Columns: (cols: string | {
     [key: string]: string;
-}, options?: ColumnsOptions) => Condition;
+} | string[], options?: ColumnsOptions) => Condition;
 export { Columns };

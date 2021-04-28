@@ -16,7 +16,8 @@
 //     }
 //   }
 // }
-import { Table, tableOptions } from "./Table"
+import { Table } from "./Table"
+// TODO db connect manage
 export { Table }
 // const t = new Table('x')
 // const { Select } = t

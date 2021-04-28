@@ -1,5 +1,6 @@
 import { Condition } from './condition'
 import { isObject } from '../util/is'
+
 interface orderByDire { [column: string]: 'ASC' | 'DESC' | true | false | 1 | 0 }
 
 const OrderBy = (orderBy: orderByDire | string | orderByDire[]) => {
